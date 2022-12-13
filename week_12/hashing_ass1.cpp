@@ -32,7 +32,8 @@ public:
         //TODO
         // ppt 13의 division method
         // return 값 작성
-        return 
+
+        return k % m_;
     }
     void drawParams() {
 
@@ -65,7 +66,8 @@ public:
         //TODO
         // ppt 13의 multiplication method
         // return 값 작성
-        return 
+
+        return ((a_ * k) % (p2w_)) >> (w_ - r_);
     }
 private:
     int64_t a_, w_, r_;
@@ -93,7 +95,8 @@ public:
         // TODO
         // // ppt 13의 Universal hashing
         // return 값 작성
-        return 
+
+        return ((a_ * k + b_) % p_) % m_;
     }
 
 private:
@@ -216,7 +219,15 @@ int64_t computeStrHash(string const& s) {
 
     ////////write code/////////
     
+    const int p = 31;
+    const int m = 1E9 + 9;
 
+    long long hash_value = 0;
+    long long p_power = 1;
+    for (char c : s){
+        hash_value = (hash_value + (c - 'a' + 1) * p_power) % m;
+        p_power = (p_power * p) % m;
+    }
 
     return hash_value;
     ///////////////////////////
@@ -258,7 +269,6 @@ public:
         //TODO
         //check whether there is a node that has the given key.
         Node* tmp = head_;
-
         
         ////////write code/////////
         /*
@@ -268,8 +278,8 @@ public:
 
         */
         while (tmp != NULL) {
-            
-
+            if(tmp->key == key) break;
+            tmp = tmp->nxt;
         }
         ///////////////////////////
 
@@ -290,7 +300,6 @@ public:
         // if don't find any matched item, return -1 
         // TODO
         Node* tmp = head_;
-        
 
         ////////write code/////////
         /*
@@ -300,7 +309,8 @@ public:
         while (tmp != NULL) { // traverse a linked list.
              // find the node having the same key.
              // return the item
-
+            if(tmp->key == key) return tmp->item;
+            tmp = tmp->nxt;
         }
         ///////////////////////////
 
@@ -325,8 +335,9 @@ public:
 
         /////// Write code//////
         while (tmp != NULL) {
-           
-
+            if(tmp->key == key) break;
+            prev = tmp;
+            tmp = tmp->nxt;
         }
         ///////////////////////
         
@@ -371,17 +382,13 @@ public:
         // 차례대로 사용해야할 함수를 아래의 단계마다 넣으시면 됩니다.
         // 코드 실행하실 때는 변수 주석은 해제해주시면 됩니다.
         
-        // int64_t key_str = 
-        
+        int64_t key_str = computeStrHash(key);
 
         // compute the slot index
-        //int64_t key_mem = hash_->
-        
+        int64_t key_mem = hash_->getHash(key_str);
 
         //find the corresponding node
-        // return listArray_[key_mem]->
-        
-
+        return listArray_[key_mem]->find(key);
     }
 
     void insert(string key, int item) {
@@ -393,17 +400,17 @@ public:
         // TODO
         // hash from string to int
         
-        //int64_t key_str = ;
+        int64_t key_str = computeStrHash(key);
         
 
         // compute the slot index
         
-        //int64_t key_mem = hash_->;
+        int64_t key_mem = hash_->getHash(key_str);
        
 
         // insert the item to the linked list
         
-        // listArray_[key_mem]-> ;
+        listArray_[key_mem]->insert(key, item);
         
     }
     void erase(string key) {
@@ -414,17 +421,17 @@ public:
 
         // hash from string to int
         
-        //int64_t key_str = ;
+        int64_t key_str = computeStrHash(key);
         
 
         // compute the slot index
         
-        //int64_t key_mem = hash_->;
+        int64_t key_mem = hash_->getHash(key_str);
         
 
         //delete the key from the linked list.
         
-        // listArray_[key_mem]->;
+        listArray_[key_mem]->erase(key);
         
     }
 
@@ -446,6 +453,7 @@ void exercise2() {
     key = "abc";    printf("key %s: %d\n", key.c_str(), dict.find(key));
     key = "abd";    printf("key %s: %d\n", key.c_str(), dict.find(key));
     key = "abe";    printf("key %s: %d\n", key.c_str(), dict.find(key));
+    key = "abf";    printf("key %s: %d\n", key.c_str(), dict.find(key));
     dict.erase("abf");
     key = "abf";    printf("key %s: %d\n", key.c_str(), dict.find(key));
 }
